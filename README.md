@@ -1,1 +1,1 @@
-# EGSucursal
+# EG.Sucursales
