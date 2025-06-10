@@ -49,26 +49,32 @@ namespace EG.Sucursales.Application.Services
         }
 
         // Mapeos
-        private SucursalDto MapToDto(Sucursal entidad) => new SucursalDto
+        private SucursalDto MapToDto(Sucursal entidad)
         {
-            Id = entidad.Id,
-            Codigo = int.Parse(entidad.Codigo),
-            Descripcion = entidad.Descripcion,
-            Direccion = entidad.Direccion,
-            Identificacion = entidad.Identificacion,
-            FechaCreacion = entidad.FechaCreacion,
-            IdMoneda = entidad.IdMoneda
-        };
+            return new SucursalDto
+            {
+                Id = entidad.Id,
+                Codigo = int.Parse(entidad.Codigo),
+                Descripcion = entidad.Descripcion,
+                Direccion = entidad.Direccion,
+                Identificacion = entidad.Identificacion,
+                FechaCreacion = entidad.FechaCreacion,
+                IdMoneda = entidad.IdMoneda
+            };
+        }
 
-        private Sucursal MapToEntity(SucursalDto dto) => new Sucursal
+        private Sucursal MapToEntity(SucursalDto dto)
         {
-            Id = dto.Id,
-            Codigo = dto.Codigo.ToString(),
-            Descripcion = dto.Descripcion,
-            Direccion = dto.Direccion,
-            Identificacion = dto.Identificacion,
-            FechaCreacion = dto.FechaCreacion,
-            IdMoneda = dto.IdMoneda
-        };
+            return new Sucursal
+            {
+                Id = dto.Id,
+                Codigo = dto.Codigo.ToString(),
+                Descripcion = dto.Descripcion,
+                Direccion = dto.Direccion,
+                Identificacion = dto.Identificacion,
+                FechaCreacion = dto.FechaCreacion,
+                IdMoneda = dto.IdMoneda
+            };
+        }
     }
 }
