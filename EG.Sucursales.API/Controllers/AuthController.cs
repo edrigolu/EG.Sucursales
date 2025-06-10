@@ -26,7 +26,8 @@ namespace EG.Sucursales.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO request)
         {
-            var usuario = await _usuarioRepository.LoginAsync(request.Correo, request.Clave);
+            var usuario = await _usuarioRepository.LoginAsync(request.Correo,
+                                                              request.Clave);
             if (usuario == null)
             {
                 return Unauthorized(new { mensaje = "Credenciales incorrectas" });
