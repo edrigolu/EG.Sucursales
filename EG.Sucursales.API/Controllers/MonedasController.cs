@@ -13,7 +13,7 @@ namespace EG.Sucursales.API.Controllers
             _monedaService = monedaService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<IActionResult> GetAll()
         {
             var monedas = await _monedaService.ListarTodasAsync();
@@ -32,7 +32,10 @@ namespace EG.Sucursales.API.Controllers
         {
             var moneda = await _monedaService.ObtenerPorIdAsync(id);
             if (moneda == null)
+            {
                 return NotFound();
+            }
+
             return Ok(moneda);
         }
 
@@ -40,7 +43,9 @@ namespace EG.Sucursales.API.Controllers
         public async Task<IActionResult> Create([FromBody] MonedaDto dto)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             var id = await _monedaService.CrearAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id }, dto);
@@ -50,10 +55,14 @@ namespace EG.Sucursales.API.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] MonedaDto dto)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             if (id != dto.Id)
+            {
                 return BadRequest("El ID no coincide");
+            }
 
             var success = await _monedaService.ActualizarAsync(dto);
             return success ? NoContent() : NotFound();

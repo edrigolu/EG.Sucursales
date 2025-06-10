@@ -19,7 +19,7 @@ namespace EG.Sucursales.API.Controllers
         /// <summary>
         /// Lista todas las sucursales registradas.
         /// </summary>
-        [HttpGet]
+        [HttpGet("all")]
         [ProducesResponseType(typeof(IEnumerable<SucursalDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
@@ -31,13 +31,16 @@ namespace EG.Sucursales.API.Controllers
         /// Obtiene una sucursal por su ID.
         /// </summary>
         [HttpGet("{id:int}")]
-        [ProducesResponseType(typeof(SucursalDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(typeof(SucursalDto), StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
             var sucursal = await _sucursalService.ObtenerPorIdAsync(id);
             if (sucursal == null)
+            {
                 return NotFound();
+            }
+
             return Ok(sucursal);
         }
 
@@ -45,16 +48,20 @@ namespace EG.Sucursales.API.Controllers
         /// Crea una nueva sucursal.
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] SucursalDto dto)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             var existe = await _sucursalService.ExisteCodigoAsync(dto.Codigo);
             if (existe)
+            {
                 return BadRequest($"Ya existe una sucursal con el código {dto.Codigo}");
+            }
 
             var id = await _sucursalService.CrearAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id }, id);
@@ -64,19 +71,25 @@ namespace EG.Sucursales.API.Controllers
         /// Actualiza una sucursal existente.
         /// </summary>
         [HttpPut("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Update(int id, [FromBody] SucursalDto dto)
         {
             if (id != dto.Id)
+            {
                 return BadRequest("El ID de la URL no coincide con el del cuerpo");
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             var actualizado = await _sucursalService.ActualizarAsync(dto);
             if (!actualizado)
+            {
                 return NotFound();
+            }
 
             return NoContent();
         }
@@ -85,13 +98,15 @@ namespace EG.Sucursales.API.Controllers
         /// Elimina una sucursal por su ID.
         /// </summary>
         [HttpDelete("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
         {
             var eliminado = await _sucursalService.EliminarAsync(id);
             if (!eliminado)
+            {
                 return NotFound();
+            }
 
             return NoContent();
         }
@@ -100,7 +115,7 @@ namespace EG.Sucursales.API.Controllers
         /// Verifica si ya existe una sucursal con el código especificado.
         /// </summary>
         [HttpGet("existe-codigo/{codigo:int}")]
-        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+        //[ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         public async Task<IActionResult> ExisteCodigo(int codigo)
         {
             var existe = await _sucursalService.ExisteCodigoAsync(codigo);

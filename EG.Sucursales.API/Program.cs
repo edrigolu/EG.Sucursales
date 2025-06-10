@@ -9,6 +9,22 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+var corsPolicyName = "AllowFrontend";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: corsPolicyName,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200") // URL de Angular
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials(); // Si usas cookies o tokens
+        });
+});
+
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -50,19 +66,7 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 //});
 
 
-var corsPolicyName = "AllowFrontend";
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: corsPolicyName,
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:4200") // URL de Angular
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials(); // Si usas cookies o tokens
-        });
-});
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -84,6 +88,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
+app.UseCors(corsPolicyName);
+
+
 //if (app.Environment.IsDevelopment())
 //{
 //    app.UseSwagger();
@@ -96,7 +103,7 @@ var app = builder.Build();
 //}
 
 
-app.UseCors(corsPolicyName);
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
