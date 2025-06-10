@@ -16,7 +16,8 @@ namespace EG.Sucursales.API.Controllers
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IConfiguration _config;
 
-        public AuthController(IUsuarioRepository usuarioRepository, IConfiguration config)
+        public AuthController(IUsuarioRepository usuarioRepository,
+                              IConfiguration config)
         {
             _usuarioRepository = usuarioRepository;
             _config = config;
@@ -27,7 +28,9 @@ namespace EG.Sucursales.API.Controllers
         {
             var usuario = await _usuarioRepository.LoginAsync(request.Correo, request.Clave);
             if (usuario == null)
+            {
                 return Unauthorized(new { mensaje = "Credenciales incorrectas" });
+            }
 
             var token = GenerarToken(usuario);
             return Ok(new

@@ -3,6 +3,8 @@ using EG.Sucursales.Domain.Entities;
 using EG.Sucursales.Domain.Interfaces;
 using EG.Sucursales.Infrastructure.Context;
 using System.Data;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace EG.Sucursales.Infrastructure.Repositories
 {
@@ -16,7 +18,7 @@ namespace EG.Sucursales.Infrastructure.Repositories
             using var connection = _context.CreateConnection();
 
             var parameters = new DynamicParameters();
-            parameters.Add("@Correo", correo);
+            parameters.Add("@Correo", correo.Trim().ToLower());
 
             var resultado = await connection.QueryAsync<Usuario, Rol, Usuario>(
                 sp,
@@ -32,11 +34,25 @@ namespace EG.Sucursales.Infrastructure.Repositories
 
             var usuario = resultado.FirstOrDefault();
 
-            if (usuario is null || usuario.Clave != clave)
+            string claveEncriptada = ObtenerHashSHA256(clave.Trim());
+
+            if (usuario is null || usuario.Clave?.Trim().ToUpper() != claveEncriptada)
+            {
                 return null;
+            }
 
             return usuario;
         }
+
+
+        private string ObtenerHashSHA256(string input)
+        {
+            using var sha = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(input.Trim());
+            var hash = sha.ComputeHash(bytes);
+            return BitConverter.ToString(hash).Replace("-", "").ToUpperInvariant();
+        }
+
 
         protected override DynamicParameters MapToParameters(Usuario entidad)
         {
